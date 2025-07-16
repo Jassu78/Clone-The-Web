@@ -46,13 +46,13 @@ To view and run this project locally:
 1.  **Clone the repository (or copy the `index.html` content):**
     If you have the repository, clone it:
     ```bash
-    git clone <repository-url>
-    cd <repository-name>
+    git clone https://github.com/Jassu78/Clone-The-Web.git
+    cd PRL.HTML
     ```
-    If you only have the `index.html` file, save it as `index.html` in a folder on your computer.
+    If you only have the `PRL.html` file, save it as 'PRL.HTML' in a folder on your computer.
 
-2.  **Open `index.html`:**
-    Simply open the `index.html` file in your preferred web browser. All necessary CSS and JavaScript libraries are loaded via CDN, so no build steps are required.
+2.  **Open `PRL.html`:**
+    Simply open the `PRL.html` file in your preferred web browser. All necessary CSS and JavaScript libraries are loaded via CDN, so no build steps are required.
 
 ## Hosting with GitHub Pages
 
