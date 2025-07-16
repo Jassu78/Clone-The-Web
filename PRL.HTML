@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura - A distraction-free way to grow</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN for icons -->
+    <script type="module">
+        import { createIcons, Sun, Moon, Heart, Lock, Smile, Lightbulb, Brain, ShieldCheck, ChevronDown, Rocket, GraduationCap, Users, Book, Puzzle, MessageCircle, Monitor, WifiOff, Settings, Zap, Compass, CheckCircle, Award, Sparkles, User, Mail, Linkedin, Twitter, Youtube, Instagram, X } from 'https://unpkg.com/lucide@latest';
+        createIcons({
+            icons: { Sun, Moon, Heart, Lock, Smile, Lightbulb, Brain, ShieldCheck, ChevronDown, Rocket, GraduationCap, Users, Book, Puzzle, MessageCircle, Monitor, WifiOff, Settings, Zap, Compass, CheckCircle, Award, Sparkles, User, Mail, Linkedin, Twitter, Youtube, Instagram, X }
+        });
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+        }
+        /* Custom styles for the device image placeholder */
+        .device-placeholder {
+            background-color: #1a1a1a; /* Darker gray for the device */
+            border: 2px solid #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        /* Gradient border for the button */
+        .gradient-border-button {
+            background-image: linear-gradient(to right, #6EE7B7, #3B82F6, #9333EA);
+            border-radius: 9999px; /* Full rounded */
+            /* No padding here, the gradient itself is the background */
+            display: inline-block; /* To make it wrap its content */
+            padding: 2px; /* This padding creates the visible gradient border */
+        }
+        .gradient-border-button > button { /* Changed from div to button for direct styling */
+            background-color: #000;
+            border-radius: 9999px; /* Full rounded */
+            padding: 0.75rem 1.5rem; /* py-3 px-6 */
+            font-weight: 600; /* font-semibold */
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none; /* Remove default button border */
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .gradient-border-button > button:hover {
+            background-color: #1a1a1a; /* Slightly lighter black on hover */
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #333;
+        }
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        .faq-question {
+            cursor: pointer;
+            padding: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 500; /* font-medium */
+            color: #ccc;
+            transition: color 0.2s ease-in-out;
+        }
+        .faq-question:hover {
+            color: #fff;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+            padding: 0 0;
+            color: #a0a0a0;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 200px; /* Adjust as needed for content */
+            padding-bottom: 1.5rem;
+        }
+        .faq-item.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+        .chevron-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+        .input-group {
+            display: flex;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+            border-radius: 9999px;
+            padding: 0.25rem; /* p-1 */
+            border: 1px solid #333;
+        }
+        .input-group input {
+            flex-grow: 1;
+            background: none;
+            border: none;
+            outline: none;
+            padding: 0.75rem 1.25rem;
+            color: #fff;
+            border-radius: 9999px 0 0 9999px;
+        }
+        .input-group button {
+            background-color: #fff;
+            color: #000;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .input-group button:hover {
+            background-color: #eee;
+        }
+
+        /* Active navigation link styling */
+        .nav-link.active {
+            color: #fff;
+            border-bottom: 2px solid #fff;
+            padding-bottom: 1px;
+        }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+        .modal-close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: color 0.2s ease-in-out;
+        }
+        .modal-close-button:hover {
+            color: #fff;
+        }
+
+        /* Animated text styles */
+        .animated-text-wrapper {
+            display: inline-flex; /* Use flex to align the text and the animated word */
+            align-items: baseline; /* Align text on the same baseline */
+            white-space: nowrap; /* Prevent wrapping before the animated word */
+        }
+        .animated-word-container {
+            display: inline-block;
+            overflow: hidden;
+            height: 1.2em; /* Ensure this matches the line-height of the surrounding text */
+            line-height: 1.2; /* Ensure this matches the line-height of the surrounding text */
+            vertical-align: middle; /* Adjust vertical alignment */
+            margin-left: 0.5rem; /* Small space between "to" and the animated word */
+        }
+
+        .animated-word {
+            display: block;
+            color: #6EE7B7; /* Green color for animated words */
+            transform: translateY(100%);
+            animation: slide-up 1s forwards; /* Animation name, duration, fill-mode */
+        }
+
+        @keyframes slide-up {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <!-- Header -->
+    <header class="container mx-auto px-4 py-6 flex justify-between items-center sticky top-0 bg-black z-50">
+        <nav class="flex items-center space-x-6 text-sm font-medium">
+            <a href="#home" class="nav-link text-gray-400 hover:text-white transition-colors">Home</a>
+            <a href="#about" class="nav-link text-gray-400 hover:text-white transition-colors">About</a>
+            <a href="#why-aura" class="nav-link text-gray-400 hover:text-white transition-colors">Why Aura?</a>
+            <a href="#features" class="nav-link text-gray-400 hover:text-white transition-colors">Features</a>
+            <a href="#experts" class="nav-link text-gray-400 hover:text-white transition-colors">Experts</a>
+            <a href="#faqs" class="nav-link text-gray-400 hover:text-white transition-colors">FAQs</a>
+            <a href="#join-waitlist" class="nav-link text-gray-400 hover:text-white transition-colors">Join Waitlist</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <!-- Sun/Moon Toggle (placeholder for functionality) -->
+            <button class="text-gray-400 hover:text-white transition-colors" aria-label="Toggle dark mode">
+                <div data-lucide="sun" class="w-5 h-5"></div>
+            </button>
+            <button class="text-gray-400 hover:text-white transition-colors" aria-label="User profile">
+                <!-- Placeholder for user icon if needed -->
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="container mx-auto px-4 py-20 text-center">
+        <h1 class="text-6xl font-extrabold mb-4">AURA</h1>
+        <p class="text-2xl font-medium text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed animated-text-wrapper">
+            A distraction-free way to
+            <span class="animated-word-container">
+                <span id="animated-word" class="animated-word">grow</span>
+            </span>
+        </p>
+        <p class="text-lg text-gray-400 mb-12 max-w-3xl mx-auto">
+            Aura is a powerful, kid-first handheld device designed to bring together learning games, safe browsing, podcasts, and an AI companion, all in a distraction-free experience built for curious young minds.
+        </p>
+        <div class="gradient-border-button inline-block mb-20">
+            <button id="hero-join-waitlist-button">Join Waitlist</button>
+        </div>
+
+        <!-- Device Image Placeholder -->
+        <div class="relative w-full max-w-3xl mx-auto h-96 bg-gray-800 rounded-3xl overflow-hidden device-placeholder flex items-center justify-center">
+            <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-black opacity-75"></div>
+            <div class="relative z-10 text-gray-500 text-xl">
+                [Device Image Placeholder]
+            </div>
+            <!-- Simple screen effect -->
+            <div class="absolute inset-x-8 inset-y-6 bg-black rounded-xl border border-gray-700"></div>
+        </div>
+    </section>
+
+    <!-- About Section (Placeholder for content if needed, currently empty) -->
+    <section id="about" class="container mx-auto px-4 py-20 text-center">
+        <!-- Content for About section would go here -->
+    </section>
+
+    <!-- Why Aura? Section -->
+    <section id="why-aura" class="bg-black py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-5xl font-extrabold mb-16">
+                Why Aura?
+                <p class="text-xl font-medium text-gray-400 mt-4">A revolutionary learning experience designed for the next generation</p>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature Card 1: Mental Health First -->
+                <div class="bg-gray-900 p-8 rounded-2xl text-left shadow-lg border border-gray-800">
+                    <div class="flex items-center mb-4">
+                        <div data-lucide="heart" class="w-8 h-8 text-green-400 mr-3"></div>
+                        <h3 class="text-xl font-semibold text-white">Mental Health First</h3>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        Designed with child psychologists to promote healthy screen time, reduce anxiety, and foster positive learning experiences.
+                    </p>
+                </div>
+
+                <!-- Feature Card 2: Parental Peace of Mind -->
+                <div class="bg-gray-900 p-8 rounded-2xl text-left shadow-lg border border-gray-800">
+                    <div class="flex items-center mb-4">
+                        <div data-lucide="lock" class="w-8 h-8 text-blue-400 mr-3"></div>
+                        <h3 class="text-xl font-semibold text-white">Parental Peace of Mind</h3>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        Complete control over content, screen time, and topics. Real-time insights and customizable safety settings.
+                    </p>
+                </div>
+
+                <!-- Feature Card 3: Joy of Learning -->
+                <div class="bg-gray-900 p-8 rounded-2xl text-left shadow-lg border border-gray-800">
+                    <div class="flex items-center mb-4">
+                        <div data-lucide="smile" class="w-8 h-8 text-yellow-400 mr-3"></div>
+                        <h3 class="text-xl font-semibold text-white">Joy of Learning</h3>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        Transform learning into an adventure with engaging games and activities that make education fun and rewarding.
+                    </p>
+                </div>
+
+                <!-- Feature Card 4: No Ads. No Distractions. -->
+                <div class="bg-gray-900 p-8 rounded-2xl text-left shadow-lg border border-gray-800">
+                    <div class="flex items-center mb-4">
+                        <div data-lucide="lightbulb" class="w-8 h-8 text-purple-400 mr-3"></div>
+                        <h3 class="text-xl font-semibold text-white">No Ads. No Distractions.</h3>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        A pure learning environment free from commercial interruptions and social media distractions.
+                    </p>
+                </div>
+
+                <!-- Feature Card 5: Intelligence Development -->
+                <div class="bg-gray-900 p-8 rounded-2xl text-left shadow-lg border border-gray-800">
+                    <div class="flex items-center mb-4">
+                        <div data-lucide="brain" class="w-8 h-8 text-red-400 mr-3"></div>
+                        <h3 class="text-xl font-semibold text-white">Intelligence Development</h3>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        AI-powered learning that adapts to your child's pace, fostering critical thinking and problem-solving skills.
+                    </p>
+                </div>
+
+                <!-- Feature Card 6: Safe by Design -->
+                <div class="bg-gray-900 p-8 rounded-2xl text-left shadow-lg border border-gray-800">
+                    <div class="flex items-center mb-4">
+                        <div data-lucide="shield-check" class="w-8 h-8 text-teal-400 mr-3"></div>
+                        <h3 class="text-xl font-semibold text-white">Safe by Design</h3>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        Privacy-first approach and strict data protection. Your child's digital safety is our top priority.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Designed for Kids. Built for Peace of Mind. Section -->
+    <section id="features" class="bg-black py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-5xl font-extrabold mb-16 max-w-4xl mx-auto">
+                Designed for Kids. Built for Peace of Mind.
+                <p class="text-xl font-medium text-gray-400 mt-4">
+                    Every feature in Aura is purposefully crafted - to excite young minds while giving parents total confidence and control.
+                </p>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 text-left">
+                <!-- Column 1: For Kids -->
+                <div>
+                    <h3 class="text-2xl font-semibold text-white mb-8 flex items-center">
+                        <div data-lucide="users" class="w-7 h-7 text-gray-400 mr-3"></div>
+                        For Kids
+                    </h3>
+                    <div class="space-y-8">
+                        <div class="flex items-start">
+                            <div data-lucide="book" class="w-6 h-6 text-green-400 flex-shrink-0 mt-1 mr-4"></div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">Fun That Feeds the Brain</h4>
+                                <p class="text-gray-400">Aura is packed with games that entertain and educate, developed with input from child development experts.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div data-lucide="message-circle" class="w-6 h-6 text-blue-400 flex-shrink-0 mt-1 mr-4"></div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">Meet Lulu - Their Curious AI Buddy</h4>
+                                <p class="text-gray-400">Kids can ask questions, learn new facts, and even get help with homework through a safe, age-aware AI assistant.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div data-lucide="puzzle" class="w-6 h-6 text-yellow-400 flex-shrink-0 mt-1 mr-4"></div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">Made for Little Hands</h4>
+                                <p class="text-gray-400">With a joystick, trackball, and tactile keyboard, Aura makes learning feel like play - no swipes or taps needed.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div data-lucide="rocket" class="w-6 h-6 text-purple-400 flex-shrink-0 mt-1 mr-4"></div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">Tough & Travel-Ready</h4>
+                                <p class="text-gray-400">Lightweight, durable, and built for life on the go. Whether it's in the car, on a plane, or at home - Aura keeps up.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: For Parents -->
+                <div>
+                    <h3 class="text-2xl font-semibold text-white mb-8 flex items-center">
+                        <div data-lucide="monitor" class="w-7 h-7 text-gray-400 mr-3"></div>
+                        For Parents
+                    </h3>
+                    <div class="space-y-8">
+                        <div class="flex items-start">
+                            <div data-lucide="settings" class="w-6 h-6 text-green-400 flex-shrink-0 mt-1 mr-4"></div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">Full Parental Control</h4>
+                                <p class="text-gray-400">You decide what your child sees, hears, and accesses - from web content to AI topics and app time.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div data-lucide="zap" class="w-6 h-6 text-blue-400 flex-shrink-0 mt-1 mr-4"></div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">No Ads. No Social Media.</h4>
+                                <p class="text-gray-400">Aura is a focused space for learning and creativity - completely free from distractions and addictive algorithms.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div data-lucide="compass" class="w-6 h-6 text-yellow-400 flex-shrink-0 mt-1 mr-4"></div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">Smart Screen Time Management</h4>
+                                <p class="text-gray-400">Set healthy limits and let Aura gently guide your child with built-in break timers and usage summaries.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div data-lucide="wifi-off" class="w-6 h-6 text-purple-400 flex-shrink-0 mt-1 mr-4"></div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">Offline-Ready Learning</h4>
+                                <p class="text-gray-400">Core features work without the internet - perfect for travel, quiet time, or low-connectivity areas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Built with Experts Who Know Kids Best Section -->
+    <section id="experts" class="bg-black py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-5xl font-extrabold mb-16 max-w-4xl mx-auto">
+                Built with Experts Who Know Kids Best
+                <p class="text-xl font-medium text-gray-400 mt-4">
+                    Aura isn't just built by engineers - it's shaped by educators, child psychologists, and digital safety specialists to support healthy development in today's tech-heavy world.
+                </p>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 text-left">
+                <!-- Column 1 -->
+                <div>
+                    <div class="flex items-start mb-8">
+                        <div data-lucide="graduation-cap" class="w-8 h-8 text-green-400 flex-shrink-0 mt-1 mr-4"></div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Learning That Sticks</h3>
+                            <p class="text-gray-400">Our content is inspired by proven learning science - designed to boost focus, memory, and curiosity.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div data-lucide="shield-check" class="w-8 h-8 text-blue-400 flex-shrink-0 mt-1 mr-4"></div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Safe by Design</h3>
+                            <p class="text-gray-400">Every layer of Aura, from AI responses to the browser experience, is being crafted with security consultants and parental input to ensure age-appropriate boundaries and total transparency.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2 -->
+                <div>
+                    <div class="flex items-start mb-8">
+                        <div data-lucide="heart" class="w-8 h-8 text-yellow-400 flex-shrink-0 mt-1 mr-4"></div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Emotionally Smart</h3>
+                            <p class="text-gray-400">We're collaborating with psychologists to ensure Aura supports emotional regulation, self-expression, and resilience.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div data-lucide="sparkles" class="w-8 h-8 text-purple-400 flex-shrink-0 mt-1 mr-4"></div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Always Evolving</h3>
+                            <p class="text-gray-400">As we grow, so will Aura. We're building an advisory network of educators and parents to constantly refine what we deliver to kids.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-xl font-medium text-gray-400 mt-20 max-w-3xl mx-auto">
+                Aura is the result of deep tech meeting deep care - and we're just getting started.
+            </p>
+        </div>
+    </section>
+
+    <!-- FAQs Section -->
+    <section id="faqs" class="bg-black py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-5xl font-extrabold mb-4">Frequently Asked Questions</h2>
+            <p class="text-xl font-medium text-gray-400 mb-16">Everything you need to know about Aura</p>
+
+            <div class="max-w-3xl mx-auto text-left">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        Is Aura just another tablet?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        No. Aura is purpose-built for kids - no open app stores, no social media, and no ads. It's focused purely on safe, educational experiences.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        How is Aura's AI safe for children?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        Aura's AI, Lulu, only engages with pre-approved, age-appropriate topics. Parents control what Lulu can discuss.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        Will my child's data be collected or shared?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        Never. Aura is designed with a privacy-first approach. No selling of personal data, no third-party tracking.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        Can Aura be used without internet?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        Yes. Core activities, games, and learning tools work offline, making it perfect for travel or low-connectivity areas.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        How much control do parents really have?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        Parents have full control over content access, screen time limits, AI topics, and browser permissions - all adjustable through simple settings.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        Can kids accidentally access inappropriate content?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        No. Aura features strict, curated browsing and AI filtering, ensuring a completely kid-safe digital environment.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 7 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        Is there any advertising or in-app purchases?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        None. Aura provides a clean, uninterrupted experience with no hidden purchases or commercial distractions.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 8 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        Will my child get addicted to Aura like other screens?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        Aura is designed to encourage healthy usage habits - with smart timers and psychologically healthy engagement patterns.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 9 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        Is Aura durable enough for young kids?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        Absolutely. It's lightweight, rugged, and built for active hands - with a tactile keyboard, joystick, and trackball to minimize drops.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 10 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        When will Aura be available for purchase?
+                        <div data-lucide="chevron-down" class="w-6 h-6 chevron-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        We're preparing a limited early release. Join our waitlist to get updates and first access.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Be Among the First Section -->
+    <section id="join-waitlist" class="bg-black py-20 text-center">
+        <h2 class="text-5xl font-extrabold mb-4">Be Among the First to Experience Aura</h2>
+        <p class="text-xl font-medium text-gray-400 mb-12 max-w-2xl mx-auto">
+            Join our waitlist to be notified when Aura becomes available. We're starting with a limited release to ensure the best experience for our early adopters.
+        </p>
+        <div class="input-group">
+            <input type="email" id="waitlist-email" placeholder="Enter your email" aria-label="Enter your email">
+            <button id="footer-join-waitlist-button">Join the Waitlist</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-12 text-center text-gray-500 text-sm">
+        <p class="mb-6">Contact</p>
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
+                <div data-lucide="linkedin" class="w-6 h-6"></div>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
+                <div data-lucide="twitter" class="w-6 h-6"></div>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="YouTube">
+                <div data-lucide="youtube" class="w-6 h-6"></div>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
+                <div data-lucide="instagram" class="w-6 h-6"></div>
+            </a>
+        </div>
+        <p class="text-gray-600">&copy; 2024 Pocketrocket Labs. All rights reserved.</p>
+    </footer>
+
+    <!-- Waitlist Success Modal -->
+    <div id="waitlist-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button" onclick="closeWaitlistModal()" aria-label="Close modal">
+                <div data-lucide="x" class="w-6 h-6"></div>
+            </button>
+            <h3 class="text-3xl font-bold text-white mb-4">Success! 🎉</h3>
+            <p class="text-lg text-gray-300 mb-6">
+                You'll be among the first to receive an email when the product launches!
+            </p>
+            <p class="text-xl text-gray-200">Thank you for joining our waitlist! 🙏</p>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle FAQ answers
+        function toggleFAQ(element) {
+            const parent = element.parentElement;
+            parent.classList.toggle('active');
+        }
+
+        // JavaScript for smooth scrolling and active navigation link highlighting
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section[id]');
+            const header = document.querySelector('header');
+
+            // Smooth scroll on click for navigation links
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - header.offsetHeight, // Adjust for fixed header
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Highlight active navigation link on scroll
+            function highlightNavLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - header.offsetHeight; // Adjust for fixed header
+                    const sectionHeight = section.clientHeight;
+                    // Add a small offset to ensure the section is clearly in view before activating
+                    if (pageYOffset >= sectionTop - 50 && pageYOffset < sectionTop + sectionHeight - 50) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', highlightNavLink);
+            // Call on load to set initial active link
+            highlightNavLink();
+
+            // Waitlist Modal functionality (for the button in the footer section)
+            const footerJoinWaitlistButton = document.getElementById('footer-join-waitlist-button');
+            const waitlistModal = document.getElementById('waitlist-modal');
+            const waitlistEmailInput = document.getElementById('waitlist-email');
+
+            footerJoinWaitlistButton.addEventListener('click', () => {
+                // Basic validation: check if email input is not empty
+                if (waitlistEmailInput.value.trim() !== '') {
+                    waitlistModal.classList.add('show');
+                    waitlistEmailInput.value = ''; // Clear the input field
+                } else {
+                    console.log("Please enter your email address.");
+                    waitlistEmailInput.style.border = '1px solid red'; // Simple visual cue
+                    setTimeout(() => {
+                        waitlistEmailInput.style.border = ''; // Remove after a short delay
+                    }, 1500);
+                }
+            });
+
+            // Close modal when clicking on the overlay or the close button
+            waitlistModal.addEventListener('click', (e) => {
+                if (e.target === waitlistModal) { // Only close if clicking the overlay itself
+                    closeWaitlistModal();
+                }
+            });
+
+            function closeWaitlistModal() {
+                waitlistModal.classList.remove('show');
+            }
+            // Expose to global scope for onclick in HTML
+            window.closeWaitlistModal = closeWaitlistModal;
+
+            // Animated text functionality
+            const words = ["learn", "play", "grow"];
+            let wordIndex = 0;
+            const animatedWordSpan = document.getElementById('animated-word');
+
+            function animateWords() {
+                // Reset animation
+                animatedWordSpan.style.animation = 'none';
+                animatedWordSpan.offsetHeight; /* Trigger reflow */
+                animatedWordSpan.style.animation = null;
+
+                animatedWordSpan.textContent = words[wordIndex];
+                animatedWordSpan.style.animation = 'slide-up 1s forwards';
+
+                wordIndex = (wordIndex + 1) % words.length;
+                setTimeout(animateWords, 2000); // 1s animation + 1s delay = 2s total before next word
+            }
+
+            // Start the animation when the page loads
+            animateWords();
+
+            // Hero section "Join Waitlist" button scroll functionality
+            const heroJoinWaitlistButton = document.getElementById('hero-join-waitlist-button');
+            heroJoinWaitlistButton.addEventListener('click', () => {
+                const targetSection = document.getElementById('join-waitlist');
+                if (targetSection) {
+                    window.scrollTo({
+                        top: targetSection.offsetTop - header.offsetHeight,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
